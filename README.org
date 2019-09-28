@@ -1,0 +1,19 @@
+# TITLE: =tf_idf matcher=
+
+=tfidf_matcher= is a package for fuzzymatching large datasets together. Most fuzzy
+matching libraries like =fuzzywuzzy= get great results, but perform very poorly
+due to their O(n^2) complexity. This package does things a little bit differently.
+
+* TODO How does it work?
+It works by splitting the search space into multiple n-grams, generating a
+sparse
+
+* TODO Yeah ok, but how do I use it?
+
+* TODO Strengths and Weaknesses
+
+* TODO Who do I thank?
+Credit goes to this [[https://towardsdatascience.com/fuzzy-matching-at-scale-84f2bfd0c536][this blog post by Josh Taylor]] for the base idea behind the
+project. I wanted to build it out for two reasons:
+1. Package building experience.
+2. Utility for future projects which may require large-domain fuzzy matching.
