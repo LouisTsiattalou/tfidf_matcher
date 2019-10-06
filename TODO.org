@@ -1,0 +1,20 @@
+#+TITLE: TODO.org
+
+* Building the Package
+** TODO Build Functions
+** TODO Populate Docstrings and Docs using Sphinx
+** TODO Compile a Wheel binary
+* Devops
+** TODO Dockerise the application
+** TODO Get Travis CI working
+=pytest= or =unittest=? Need to consult Travis documentation.
+* Web Application
+** TODO Create a Starlette App
+*** Functionality
+- Match-to-self mode
+  - Only need to have a single column csv/spreadsheet uploaded
+- Match-to-other mode
+  - Functionality built around this use case
+  - Give top matches, along with metadata from source sheet
+- For this to work, need upload/download file functionality.
+** TODO Publish to Google Cloud Platform
