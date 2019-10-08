@@ -1,0 +1,178 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>tfidf_matcher.matcher &#8212; tfidf_matcher  documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for tfidf_matcher.matcher</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+
+<span class="c1"># AUTHOR: Louis Tsiattalou</span>
+<span class="c1"># DATE STARTED: Thu Oct 3 23:05:44 2019</span>
+<span class="c1"># GITLAB: https://gitlab.com/LouisTsiattalou/tfidf_matcher</span>
+<span class="c1"># DESCRIPTION: Match list items to closest tf-idf match in second list.</span>
+
+<span class="kn">from</span> <span class="nn">tfidf_matcher.ngrams</span> <span class="k">import</span> <span class="n">ngrams</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="k">import</span> <span class="n">TfidfVectorizer</span>
+<span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="k">import</span> <span class="n">NearestNeighbors</span>
+
+<div class="viewcode-block" id="matcher"><a class="viewcode-back" href="../../source/tfidf_matcher.html#tfidf_matcher.matcher.matcher">[docs]</a><span class="k">def</span> <span class="nf">matcher</span><span class="p">(</span><span class="n">original</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">lookup</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">k_matches</span> <span class="o">=</span> <span class="mi">5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Takes two lists, returns top `k` matches from `lookup` dataset.</span>
+
+<span class="sd">    This function does this by:</span>
+<span class="sd">    - Splitting the `lookup` list into ngrams.</span>
+<span class="sd">    - Transforming the resulting ngram list into a TF-IDF Sparse Matrix.</span>
+<span class="sd">    - Fit a NearestNeighbours Model to the matrix using the lookup data.</span>
+<span class="sd">    - Transform the `original` list into a TF-IDF Sparse Matrix.</span>
+<span class="sd">    - Calculates distances to all the `n-matches` nearest neighbours</span>
+<span class="sd">    - Then extract the `original`, `n-matches` closest lookups, and calculate</span>
+<span class="sd">    a match score (abs(1 - Distance to Nearest Neighbour))</span>
+
+<span class="sd">    :param original: List of strings to generate ngrams from.</span>
+<span class="sd">    :type original: list (of strings), or Pandas Series.</span>
+<span class="sd">    :param lookup: List of strings to match against.</span>
+<span class="sd">    :type lookup: list (of strings), or Pandas Series.</span>
+<span class="sd">    :param k_matches: Number of matches to return.</span>
+<span class="sd">    :type k_matches: int</span>
+<span class="sd">    :raises AssertionError: Throws an error if the datatypes in `original` aren&#39;t strings.</span>
+<span class="sd">    :raises AssertionError: Throws an error if the datatypes in `lookup` aren&#39;t strings.</span>
+<span class="sd">    :raises AssertionError: Throws an error if `k_matches` isn&#39;t an integer.</span>
+<span class="sd">    :return: Returns a Pandas dataframe with the `original` list,</span>
+<span class="sd">        `k_matches` columns containing the closest matches from `lookup`,</span>
+<span class="sd">        as well as a Match Score for the closest of these matches.</span>
+<span class="sd">    :rtype: Pandas dataframe</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Assertions</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="s2">&quot;string&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">original</span><span class="p">]),</span> <span class="s2">&quot;Original contains non-str elements!&quot;</span>
+    <span class="k">assert</span> <span class="nb">all</span><span class="p">([</span><span class="nb">type</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="s2">&quot;string&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">lookup</span><span class="p">]),</span> <span class="s2">&quot;Lookup contains non-str elements!&quot;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">k_matches</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="s2">&quot;k_matches must be an integer&quot;</span>
+
+    <span class="c1"># Enforce listtype</span>
+    <span class="n">original</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">original</span><span class="p">)</span>
+    <span class="n">lookup</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">lookup</span><span class="p">)</span>
+
+    <span class="c1"># Generate Sparse TFIDF matrix from Lookup corpus</span>
+    <span class="n">vectorizer</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">min_df</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                                 <span class="n">analyzer</span> <span class="o">=</span> <span class="n">ngrams</span><span class="p">)</span>
+    <span class="n">tf_idf_lookup</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">lookup</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+
+    <span class="c1"># Fit KNN model to sparse TFIDF matrix generated from Lookup</span>
+    <span class="n">nbrs</span> <span class="o">=</span> <span class="n">NearestNeighbors</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="n">k_matches</span><span class="p">,</span>
+                            <span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;cosine&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">tf_idf_lookup</span><span class="p">)</span>
+
+    <span class="c1"># Use nbrs model to obtain nearest matches in lookup dataset. Vectorize first.</span>
+    <span class="n">tf_idf_original</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">original</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+    <span class="n">distances</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">nbrs</span><span class="o">.</span><span class="n">kneighbors</span><span class="p">(</span><span class="n">tf_idf_original</span><span class="p">)</span>
+
+    <span class="c1"># Extract top Match Score (which is just the distance to the nearest neighbour),</span>
+    <span class="c1"># Original match item, and Lookup matches.</span>
+    <span class="n">meta_list</span><span class="o">=</span> <span class="p">[]</span>
+    <span class="n">lookup_list</span><span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">indices</span><span class="p">):</span> <span class="c1"># i is 0:len(original), j is list of lists of matches</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">distances</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span> <span class="n">original</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="c1"># Original match and Match Score</span>
+        <span class="n">lookups</span> <span class="o">=</span> <span class="p">[</span><span class="n">lookup</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">idx</span><span class="p">]</span> <span class="c1"># Lookup columns</span>
+        <span class="n">meta_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="n">lookup_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lookups</span><span class="p">)</span>
+
+    <span class="c1"># Convert to df</span>
+    <span class="n">df_metadata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">meta_list</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Match Confidence&#39;</span><span class="p">,</span> <span class="s1">&#39;Original Name&#39;</span><span class="p">])</span>
+    <span class="n">df_lookups</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">lookup_list</span><span class="p">,</span>
+                              <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Lookup &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">k_matches</span><span class="p">)])</span>
+
+    <span class="c1"># bind columns, transform Match Confidence to {0,1} with 1 a guaranteed match.</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_metadata</span><span class="p">,</span> <span class="n">df_lookups</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">matches</span><span class="p">[</span><span class="s1">&#39;Match Confidence&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">matches</span><span class="p">[</span><span class="s1">&#39;Match Confidence&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">matches</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">tfidf_matcher</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Louis Tsiattalou.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

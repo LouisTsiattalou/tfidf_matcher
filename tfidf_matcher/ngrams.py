@@ -14,10 +14,7 @@ def ngrams(string, n=3):
     :type string: list (of strings)
     :param n: Maximum length of the n-gram. Defaults to 3.
     :type n: int
-    ...
-    :raises AssertionError: If you pass in a list that contains
-    datatypes other than `string`, you're in trouble!
-    ...
+    :raises AssertionError: If you pass in a list that contains datatypes other than `string`, you're in trouble!
     :return: Returns list of ngrams generated from the input string.
     :rtype: list
     """

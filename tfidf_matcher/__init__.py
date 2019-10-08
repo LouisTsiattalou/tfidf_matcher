@@ -5,5 +5,5 @@ VERSION = (0, 1, 1)
 # string created from tuple to avoid inconsistency
 __version__ = ".".join([str(x) for x in VERSION])
 
-from tfidf_matcher.ngrams import ngrams
-from tfidf_matcher.matcher import matcher
+import tfidf_matcher.ngrams
+import tfidf_matcher.matcher

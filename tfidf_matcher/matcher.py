@@ -5,7 +5,7 @@
 # GITLAB: https://gitlab.com/LouisTsiattalou/tfidf_matcher
 # DESCRIPTION: Match list items to closest tf-idf match in second list.
 
-from ngrams import ngrams
+from tfidf_matcher.ngrams import ngrams
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import NearestNeighbors
@@ -28,12 +28,13 @@ def matcher(original = [], lookup = [], k_matches = 5):
     :type lookup: list (of strings), or Pandas Series.
     :param k_matches: Number of matches to return.
     :type k_matches: int
-    ...
-    :raises AssertionError: If you pass in a list that contains
-    datatypes other than `string`, you're in trouble!
-    ...
-    :return: Returns list of ngrams generated from the input string.
-    :rtype: list
+    :raises AssertionError: Throws an error if the datatypes in `original` aren't strings.
+    :raises AssertionError: Throws an error if the datatypes in `lookup` aren't strings.
+    :raises AssertionError: Throws an error if `k_matches` isn't an integer.
+    :return: Returns a Pandas dataframe with the `original` list,
+        `k_matches` columns containing the closest matches from `lookup`,
+        as well as a Match Score for the closest of these matches.
+    :rtype: Pandas dataframe
     """
 
     # Assertions
