@@ -1,28 +1,27 @@
 #!/usr/bin/env python
-# TITLE: NGrams
+
 # AUTHOR: Louis Tsiattalou
 # DATE STARTED: Thu Oct 3 23:01:11 2019
 # GITLAB: https://gitlab.com/LouisTsiattalou/tfidf_matcher
-# DESCRIPTION:
-# Extract ngrams from a string.
-
-"""Generate a full list of ngrams from a list of strings
-
-:param string: List of strings to generate ngrams from.
-:type string: list (of strings)
-:param n: Maximum length of the n-gram. Defaults to 3.
-:type n: int
-...
-:raises AssertionError: If you pass in a list that contains
-datatypes other than `string`, you're in trouble!
-...
-:return: Returns list of ngrams generated from the input string.
-:rtype: list
-"""
+# DESCRIPTION: Extract ngrams from a string.
 
 import re
 
 def ngrams(string, n=3):
+    """Generate a full list of ngrams from a list of strings
+
+    :param string: List of strings to generate ngrams from.
+    :type string: list (of strings)
+    :param n: Maximum length of the n-gram. Defaults to 3.
+    :type n: int
+    ...
+    :raises AssertionError: If you pass in a list that contains
+    datatypes other than `string`, you're in trouble!
+    ...
+    :return: Returns list of ngrams generated from the input string.
+    :rtype: list
+    """
+
     # Assert string type
     assert type(string) == type("string"), "String not passed in!"
 
