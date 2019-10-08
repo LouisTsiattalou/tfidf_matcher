@@ -34,6 +34,10 @@ def matcher(original = [], lookup = [], k_matches = 5):
     :rtype: list
     """
 
+    # Assertions
+    assert all([type(x) == type("string") for x in original]), "Original contains non-str elements!"
+    assert all([type(x) == type("string") for x in lookup]), "Lookup contains non-str elements!"
+    assert k_matches == type(0), "k_matches must be an integer"
 
     # Generate Sparse TFIDF matrix from Lookup corpus
     vectorizer = TfidfVectorizer(min_df = 1,
