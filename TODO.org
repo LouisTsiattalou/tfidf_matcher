@@ -1,8 +1,9 @@
 #+TITLE: TODO.org
 
 * Building the Package
-** TODO Build Functions
+** DONE Build Functions
 ** TODO Populate Docstrings and Docs using Sphinx
+** TODO Unit Tests
 ** TODO Compile a Wheel binary
 * Devops
 ** TODO Dockerise the application

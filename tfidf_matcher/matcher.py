@@ -5,8 +5,10 @@
 # GITLAB: https://gitlab.com/LouisTsiattalou/tfidf_matcher
 # DESCRIPTION: Match list items to closest tf-idf match in second list.
 
-import ngrams
+from ngrams import ngrams
 import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.neighbors import NearestNeighbors
 
 def matcher(original = [], lookup = [], k_matches = 5):
     """Takes two lists, returns top `k` matches from `lookup` dataset.
@@ -21,9 +23,9 @@ def matcher(original = [], lookup = [], k_matches = 5):
     a match score (abs(1 - Distance to Nearest Neighbour))
 
     :param original: List of strings to generate ngrams from.
-    :type original: list (of strings)
+    :type original: list (of strings), or Pandas Series.
     :param lookup: List of strings to match against.
-    :type lookup: list (of strings)
+    :type lookup: list (of strings), or Pandas Series.
     :param k_matches: Number of matches to return.
     :type k_matches: int
     ...
@@ -37,7 +39,11 @@ def matcher(original = [], lookup = [], k_matches = 5):
     # Assertions
     assert all([type(x) == type("string") for x in original]), "Original contains non-str elements!"
     assert all([type(x) == type("string") for x in lookup]), "Lookup contains non-str elements!"
-    assert k_matches == type(0), "k_matches must be an integer"
+    assert type(k_matches) == type(0), "k_matches must be an integer"
+
+    # Enforce listtype
+    original = list(original)
+    lookup = list(lookup)
 
     # Generate Sparse TFIDF matrix from Lookup corpus
     vectorizer = TfidfVectorizer(min_df = 1,
@@ -58,7 +64,7 @@ def matcher(original = [], lookup = [], k_matches = 5):
     lookup_list= []
     for i,idx in enumerate(indices): # i is 0:len(original), j is list of lists of matches
         metadata = [round(distances[i][0], 2), original[i]] # Original match and Match Score
-        lookups = [lookup.values[x] for x in idx] # Lookup columns
+        lookups = [lookup[x] for x in idx] # Lookup columns
         meta_list.append(metadata)
         lookup_list.append(lookups)
 
