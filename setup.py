@@ -2,11 +2,6 @@
 
 import setuptools
 
-setup(
-    name='tfidf_matcher',
-    # ...
-)
-
 setuptools.setup(
     name="tfidf_matcher-louistsiattalou",
     version="0.0.1",

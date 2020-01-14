@@ -5,8 +5,8 @@
 # GITLAB: https://gitlab.com/LouisTsiattalou/tfidf_matcher
 # DESCRIPTION: Match list items to closest tf-idf match in second list.
 
-from tfidf_matcher.ngrams import ngrams
 import pandas as pd
+from tfidf_matcher.ngrams import ngrams
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import NearestNeighbors
 
