@@ -2,18 +2,32 @@
 
 =tfidf_matcher= is a package for fuzzymatching large datasets together. Most fuzzy
 matching libraries like =fuzzywuzzy= get great results, but perform very poorly
-due to their O(n^2) complexity. This package does things a little bit differently.
+due to their O(n^2) complexity.
 
-* TODO How does it work?
-It works by splitting the search space into multiple n-grams, generating a
-sparse
-
+* How does it work?
+This package provides two functions:
+- ~ngrams()~: Simple ngram generator.
+- ~matcher()~: Matches a list of strings against a reference corpus. Does this by:
+  - Vectorizing the reference corpus using TF-IDF into a term-document matrix.
+  - Fitting a K-NearestNeighbours model to the sparse matrix.
+  - Vectorizing the list of strings to be matched and passing it in to the KNN
+    model to calculate the cosine distance (the OOTB ~cosine_similarity~
+    function in sklearn is very memory-inefficient for our use case).
+  - Some data manipulation to emit ~k_matches~ closest matches.
 * TODO Yeah ok, but how do I use it?
 
 * TODO Strengths and Weaknesses
-
+- Quick. Very quick.
+- Can emit however many closest matches you want. I found that 3 worked best.
+- Not very well tested so potentially unstable results. Worked well for 640
+  company names matched against a lookup corpus of >700,000 company names.
+- It's pretty complicated to get to grips with the method if you wanted to apply
+  it in different ways. The underlying algorithms are pretty hard to reason
+  about when you jump to the definition of, say, ~TfidfVectorizer~ from sklearn.
 * TODO Who do I thank?
 Credit goes to this [[https://towardsdatascience.com/fuzzy-matching-at-scale-84f2bfd0c536][this blog post by Josh Taylor]] for the base idea behind the
-project. I wanted to build it out for two reasons:
+package and the code structure, which I subsequently modified to work on the
+problem I was solving. After the task I needed it for at work was complete,
+I wanted to build it out into a package for two reasons:
 1. Package building experience.
 2. Utility for future projects which may require large-domain fuzzy matching.

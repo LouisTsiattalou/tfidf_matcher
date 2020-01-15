@@ -2,9 +2,11 @@
 
 * Building the Package
 ** DONE Build Functions
-** TODO Populate Docstrings and Docs using Sphinx
+** DONE Populate Docstrings and Docs using Sphinx
+CLOSED: [2020-01-15 Wed 10:12]
 ** TODO Unit Tests
-** TODO Compile a Wheel binary
+** DONE Compile a Wheel binary
+CLOSED: [2020-01-15 Wed 10:13]
 * Devops
 ** TODO Dockerise the application
 ** TODO Get Travis CI working
