@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-
 # AUTHOR: Louis Tsiattalou
-# DATE STARTED: Thu Oct 3 23:05:44 2019
-# GITLAB: https://gitlab.com/LouisTsiattalou/tfidf_matcher
 # DESCRIPTION: Match list items to closest tf-idf match in second list.
 
 import pandas as pd
@@ -42,21 +38,23 @@ def matcher(original = [], lookup = [], k_matches = 5):
     assert all([type(x) == type("string") for x in lookup]), "Lookup contains non-str elements!"
     assert type(k_matches) == type(0), "k_matches must be an integer"
 
-    # Enforce listtype
+    # Enforce listtype, set to lower
     original = list(original)
     lookup = list(lookup)
+    original_lower = [x.lower() for x in original]
+    lookup_lower = [x.lower() for x in lookup]
 
     # Generate Sparse TFIDF matrix from Lookup corpus
     vectorizer = TfidfVectorizer(min_df = 1,
                                  analyzer = ngrams)
-    tf_idf_lookup = vectorizer.fit_transform(lookup.str.lower())
+    tf_idf_lookup = vectorizer.fit_transform(lookup_lower)
 
     # Fit KNN model to sparse TFIDF matrix generated from Lookup
     nbrs = NearestNeighbors(n_neighbors=k_matches,
                             n_jobs=-1, metric='cosine').fit(tf_idf_lookup)
 
     # Use nbrs model to obtain nearest matches in lookup dataset. Vectorize first.
-    tf_idf_original = vectorizer.transform(original.str.lower())
+    tf_idf_original = vectorizer.transform(original_lower)
     distances, indices = nbrs.kneighbors(tf_idf_original)
 
     # Extract top Match Score (which is just the distance to the nearest neighbour),

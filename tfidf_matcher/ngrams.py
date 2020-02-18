@@ -1,8 +1,4 @@
-#!/usr/bin/env python
-
 # AUTHOR: Louis Tsiattalou
-# DATE STARTED: Thu Oct 3 23:01:11 2019
-# GITLAB: https://gitlab.com/LouisTsiattalou/tfidf_matcher
 # DESCRIPTION: Extract ngrams from a string.
 
 import re
