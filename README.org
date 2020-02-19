@@ -24,6 +24,9 @@ using the ~k_matches~ argument. The result will be a pandas DataFrame containing
 containing the closest match from the *lookup* list, and a match score for the
 closest match (which is 1 - the cosine distance between the matches normalised
 to [0,1])
+
+Simply import with ~import tfidf_matcher as tm~, and call the matcher function
+with ~tm.matcher()~.
 * Strengths and Weaknesses
 - Quick. Very quick.
 - Can emit however many closest matches you want. I found that 3 worked best.

@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="tfidf_matcher-louistsiattalou",
+    name="tfidf_matcher",
     version="0.1.0",
     author="Louis Tsiattalou",
     author_email="louis.tsi@gmail.com",
