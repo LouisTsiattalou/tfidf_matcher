@@ -4,11 +4,13 @@
 ** DONE Build Functions
 ** DONE Populate Docstrings and Docs using Sphinx
 CLOSED: [2020-01-15 Wed 10:12]
-** TODO Unit Tests
+** DONE Unit Tests
+CLOSED: [2020-02-19 Wed 17:40]
+- [X] ~ngrams~
+- [X] ~matcher~
 ** DONE Compile a Wheel binary
 CLOSED: [2020-01-15 Wed 10:13]
 * Devops
-** TODO Dockerise the application
 ** TODO Get Travis CI working
 =pytest= or =unittest=? Need to consult Travis documentation.
 * Web Application
