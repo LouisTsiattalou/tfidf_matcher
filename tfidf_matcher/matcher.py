@@ -6,7 +6,7 @@ from tfidf_matcher.ngrams import ngrams
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import NearestNeighbors
 
-def matcher(original = [], lookup = [], k_matches = 5):
+def matcher(original = [], lookup = [], k_matches = 5, ngram_length = 3):
     """Takes two lists, returns top `k` matches from `lookup` dataset.
 
     This function does this by:
@@ -24,9 +24,13 @@ def matcher(original = [], lookup = [], k_matches = 5):
     :type lookup: list (of strings), or Pandas Series.
     :param k_matches: Number of matches to return.
     :type k_matches: int
+    :param ngram_length: Length of Ngrams returned by `tfidf_matcher.ngrams` callable
+    :type ngram_length: int
     :raises AssertionError: Throws an error if the datatypes in `original` aren't strings.
     :raises AssertionError: Throws an error if the datatypes in `lookup` aren't strings.
     :raises AssertionError: Throws an error if `k_matches` isn't an integer.
+    :raises AssertionError: Throws an error if k_matches > len(lookup)
+    :raises AssertionError: Throws an error if ngram_length isn't an integer
     :return: Returns a Pandas dataframe with the `original` list,
         `k_matches` columns containing the closest matches from `lookup`,
         as well as a Match Score for the closest of these matches.
@@ -37,6 +41,8 @@ def matcher(original = [], lookup = [], k_matches = 5):
     assert all([type(x) == type("string") for x in original]), "Original contains non-str elements!"
     assert all([type(x) == type("string") for x in lookup]), "Lookup contains non-str elements!"
     assert type(k_matches) == type(0), "k_matches must be an integer"
+    assert k_matches < len(lookup), "k_matches must be shorter than the total length of the lookup list"
+    assert type(ngram_length) == type(0), "ngram_length must be an integer"
 
     # Enforce listtype, set to lower
     original = list(original)
@@ -44,9 +50,13 @@ def matcher(original = [], lookup = [], k_matches = 5):
     original_lower = [x.lower() for x in original]
     lookup_lower = [x.lower() for x in lookup]
 
+    # Set ngram length for TfidfVectorizer callable
+    def ngrams_user(string, n = ngram_length):
+        return ngrams(string, n)
+
     # Generate Sparse TFIDF matrix from Lookup corpus
     vectorizer = TfidfVectorizer(min_df = 1,
-                                 analyzer = ngrams)
+                                 analyzer = ngrams_user)
     tf_idf_lookup = vectorizer.fit_transform(lookup_lower)
 
     # Fit KNN model to sparse TFIDF matrix generated from Lookup
