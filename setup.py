@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 
 from setuptools import setup, find_packages
+long_description_md = open("README.md", encoding = "utf-8").read()
 
 setup(
     name="tfidf_matcher",
-    version="0.1.0",
+    version="0.2.0",
     author="Louis Tsiattalou",
     author_email="louis.tsi@gmail.com",
     description="A small package that enables super-fast TF-IDF based string matching.",
-    long_description="TODO",
+    long_description=long_description_md,
     long_description_content_type="text/markdown",
     url="https://github.com/louistsiattalou/tfidf_matcher",
     classifiers=[
