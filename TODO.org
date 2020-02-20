@@ -11,6 +11,11 @@ CLOSED: [2020-02-19 Wed 17:40]
 ** DONE Compile a Wheel binary
 CLOSED: [2020-01-15 Wed 10:13]
 * Devops
+** TODO Makefile
+- pandoc README.org to README.md
+- build wheel & source distributions
+  - remove .tar one
+- regenerate docs
 ** TODO Get Travis CI working
 =pytest= or =unittest=? Need to consult Travis documentation.
 * Web Application

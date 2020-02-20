@@ -1,6 +1,6 @@
 `tfidf_matcher` is a package for fuzzymatching large datasets together. Most fuzzy
 matching libraries like `fuzzywuzzy` get great results, but perform very poorly
-due to their O(n<sup>2</sup>) complexity.
+due to their O(n^2) complexity.
 
 
 # How does it work?
@@ -24,13 +24,19 @@ Define two lists; your **original** list (list you want matches for) and your
 be much longer than your original list. Pass them into the `matcher` function
 along with the number of matches you want to display from the **lookup** list
 using the `k_matches` argument. The result will be a pandas DataFrame containing
-1 row per item in your **original** list, along with \`k<sub>matches</sub>\` columns
+1 row per item in your **original** list, along with \`k\\\_matches\` columns
 containing the closest match from the **lookup** list, and a match score for the
 closest match (which is 1 - the cosine distance between the matches normalised
 to [0,1])
 
 Simply import with `import tfidf_matcher as tm`, and call the matcher function
-with `tm.matcher()`.
+with `tm.matcher()`. It takes the following arguments:
+
+-   \`original\`: List of strings you want to match.
+-   \`lookup\`: List of strings you want to match against.
+-   \`k\_matches\`: Number of the closest results from \`lookup\` to return (1 per column).
+-   \`ngram\_length\`: Length of \`ngrams\` used in the algorithm. Anecdotal testing
+    shows 2 or 3 to be optimal, but feel free to tinker.
 
 
 # Strengths and Weaknesses
