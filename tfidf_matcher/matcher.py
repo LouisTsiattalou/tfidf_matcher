@@ -41,7 +41,7 @@ def matcher(original = [], lookup = [], k_matches = 5, ngram_length = 3):
     assert all([type(x) == type("string") for x in original]), "Original contains non-str elements!"
     assert all([type(x) == type("string") for x in lookup]), "Lookup contains non-str elements!"
     assert type(k_matches) == type(0), "k_matches must be an integer"
-    assert k_matches < len(lookup), "k_matches must be shorter than the total length of the lookup list"
+    assert k_matches <= len(lookup), "k_matches must be shorter or equal to the total length of the lookup list"
     assert type(ngram_length) == type(0), "ngram_length must be an integer"
 
     # Enforce listtype, set to lower
