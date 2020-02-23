@@ -2,12 +2,11 @@
 language: python
 # Language Versions
 python:
-  - "3.4"
   - "3.5"
   - "3.6"
   - "3.7"
   - "3.8"
-  - "nightly"
+  - "3.8-dev"
 # Install Script
 install:
   - pip install -U pip setuptools wheel   # Update build deps

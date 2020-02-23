@@ -18,7 +18,7 @@ setup(
         "Operating System :: OS Independent",
     ],
     packages=find_packages(),
-    python_requires='>=3.0',
+    python_requires='>=3.5',
     install_requires=["sklearn", "pandas"],
     setup_requires=["sklearn", "pandas"]
 )
