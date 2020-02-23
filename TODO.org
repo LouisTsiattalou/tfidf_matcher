@@ -17,7 +17,7 @@ CLOSED: [2020-01-15 Wed 10:13]
   - remove .tar one
 - regenerate docs
 ** TODO Get Travis CI working
-=pytest= or =unittest=? Need to consult Travis documentation.
+Going with =unittest=.
 * Web Application
 ** TODO Create a Starlette App
 *** Functionality

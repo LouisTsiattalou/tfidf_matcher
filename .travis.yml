@@ -1,0 +1,17 @@
+# Language
+language: python
+# Language Versions
+python:
+  - "3.4"
+  - "3.5"
+  - "3.6"
+  - "3.7"
+  - "3.8"
+  - "nightly"
+# Install Script
+install:
+  - pip install -U pip setuptools wheel   # Update build deps
+  - pip install -r requirements.txt       # Install package deps
+script:
+  - python setup.py sdist bdist_wheel     # Build Package
+  - python -m unittest discover -s test   # Run Tests
