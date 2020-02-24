@@ -1,11 +1,9 @@
 # AUTHOR: Louis Tsiattalou
-# DESCRIPTION: Test matcher module.
+# DESCRIPTION: Test matcher module. Execute with `python -m unittest discover -s test/`
 
 import unittest
 from tfidf_matcher.ngrams import ngrams
 from tfidf_matcher.matcher import matcher
-# If import flag fails, try removing tfidf_matcher and just do `from ngrams
-# import ngrams` and execute using `python -m unittest discover -s test -t src`
 
 class TestMatcher(unittest.TestCase):
 

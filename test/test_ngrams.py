@@ -1,10 +1,8 @@
 # AUTHOR: Louis Tsiattalou
-# DESCRIPTION: Test ngrams module.
+# DESCRIPTION: Test ngrams module. Execute with `python -m unittest discover -s test/`
 
 import unittest
 from tfidf_matcher.ngrams import ngrams
-# If import flag fails, try removing tfidf_matcher and just do `from ngrams
-# import ngrams` and execute using `python -m unittest discover -s tests -t src`
 
 class TestNgrams(unittest.TestCase):
 

@@ -1,2 +1,5 @@
 pandas
 sklearn
+wheel
+setuptools
+sphinx
