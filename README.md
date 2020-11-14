@@ -1,4 +1,4 @@
-=tfidf\_matcher= is a package for fuzzymatching large datasets together.
+`tfidf_matcher` is a package for fuzzymatching large datasets together.
 Most fuzzy matching libraries like `fuzzywuzzy` get great results, but
 don\'t scale well due to their O(n\^2) complexity.
 
@@ -52,22 +52,20 @@ Strengths and Weaknesses
 -   Not very well tested so potentially unstable results. Worked well
     for 640 company names matched against a lookup corpus of \>700,000
     company names.
--   It\'s pretty complicated to get to grips with the method if you
-    wanted to apply it in different ways. The underlying algorithms are
-    pretty hard to reason about when you jump to the definition of, say,
-    `TfidfVectorizer` from sklearn. I *just about* understand the
-    method, which I adapted from [this blog post by Josh
-    Taylor](https://towardsdatascience.com/fuzzy-matching-at-scale-84f2bfd0c536),
-    which itself was adapted from another blog post.
 
 Who do I thank?
 ===============
 
-As above, credit for the method goes to Josh Taylor and [van den
-Blog](https://bergvca.github.io/). I wanted to adapt the methods to work
-nicely on a company mathcing problem I was having, and decided to build
-out my resultant code into a package for two reasons:
+For the method, thank [Josh
+Taylor](https://towardsdatascience.com/fuzzy-matching-at-scale-84f2bfd0c536) and
+[Chris van den Berg](https://bergvca.github.io/). I wanted to adapt the methods to
+work nicely on a company mathcing problem I was having, and decided to build out
+my resultant code into a package for two reasons:
 
 1.  Package building experience.
 2.  Utility for future projects which may require large-domain fuzzy
     matching.
+
+I understand the algorithms behind k-Nearest Neighbours & TF-IDF Vectorisation,
+but it was through implementing the ideas in the blogs linked that I was able to
+build this project out.

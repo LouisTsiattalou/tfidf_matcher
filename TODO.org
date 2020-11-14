@@ -11,12 +11,14 @@ CLOSED: [2020-02-19 Wed 17:40]
 ** DONE Compile a Wheel binary
 CLOSED: [2020-01-15 Wed 10:13]
 * Devops
-** TODO Makefile
+** DONE Makefile
+CLOSED: [2020-11-14 Sat 09:48]
 - pandoc README.org to README.md
 - build wheel & source distributions
   - remove .tar one
 - regenerate docs
-** TODO Get Travis CI working
+** DONE Get Travis CI working
+CLOSED: [2020-11-14 Sat 09:48]
 Going with =unittest=.
 * Web Application
 ** TODO Create a Starlette App
@@ -27,4 +29,4 @@ Going with =unittest=.
   - Functionality built around this use case
   - Give top matches, along with metadata from source sheet
 - For this to work, need upload/download file functionality.
-** TODO Publish to Google Cloud Platform
+** TODO Publish to Cloud Infrastructure
