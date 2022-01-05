@@ -39,13 +39,16 @@ def matcher(original=[], lookup=[], k_matches=5, ngram_length=3):
     """
 
     # Assertions
-    assert all([type(x) == type("string")
-               for x in original]), "Original contains non-str elements!"
-    assert all([type(x) == type("string")
-               for x in lookup]), "Lookup contains non-str elements!"
+    assert all(
+        [type(x) == type("string") for x in original]
+    ), "Original contains non-str elements!"
+    assert all(
+        [type(x) == type("string") for x in lookup]
+    ), "Lookup contains non-str elements!"
     assert type(k_matches) == type(0), "k_matches must be an integer"
     assert k_matches < len(
-        lookup), "k_matches must be shorter than the total length of the lookup list"
+        lookup
+    ), "k_matches must be shorter than the total length of the lookup list"
     assert type(ngram_length) == type(0), "ngram_length must be an integer"
 
     # Enforce listtype, set to lower
@@ -59,13 +62,13 @@ def matcher(original=[], lookup=[], k_matches=5, ngram_length=3):
         return ngrams(string, n)
 
     # Generate Sparse TFIDF matrix from Lookup corpus
-    vectorizer = TfidfVectorizer(min_df=1,
-                                 analyzer=ngrams_user)
+    vectorizer = TfidfVectorizer(min_df=1, analyzer=ngrams_user)
     tf_idf_lookup = vectorizer.fit_transform(lookup_lower)
 
     # Fit KNN model to sparse TFIDF matrix generated from Lookup
-    nbrs = NearestNeighbors(n_neighbors=k_matches,
-                            n_jobs=-1, metric='cosine').fit(tf_idf_lookup)
+    nbrs = NearestNeighbors(n_neighbors=k_matches, n_jobs=-1, metric="cosine").fit(
+        tf_idf_lookup
+    )
 
     # Use nbrs model to obtain nearest matches in lookup dataset. Vectorize first.
     tf_idf_original = vectorizer.transform(original_lower)
@@ -91,24 +94,27 @@ def matcher(original=[], lookup=[], k_matches=5, ngram_length=3):
         lookup_list.append(lookups)
 
     # Convert to df
-    df_orig_name = pd.DataFrame(
-        original_name_list, columns=['Original Name'])
+    df_orig_name = pd.DataFrame(original_name_list, columns=["Original Name"])
 
-    df_lookups = pd.DataFrame(lookup_list,
-                              columns=['Lookup ' + str(x+1) for x in range(0, k_matches)])
-    df_confidence = pd.DataFrame(confidence_list,
-                                 columns=['Lookup ' + str(x+1) + ' Confidence' for x in range(0, k_matches)])
-    df_index = pd.DataFrame(index_list,
-                            columns=['Lookup ' + str(x+1) + ' Index' for x in range(0, k_matches)])
+    df_lookups = pd.DataFrame(
+        lookup_list, columns=["Lookup " + str(x + 1) for x in range(0, k_matches)]
+    )
+    df_confidence = pd.DataFrame(
+        confidence_list,
+        columns=["Lookup " + str(x + 1) + " Confidence" for x in range(0, k_matches)],
+    )
+    df_index = pd.DataFrame(
+        index_list,
+        columns=["Lookup " + str(x + 1) + " Index" for x in range(0, k_matches)],
+    )
 
     # bind columns
-    matches = pd.concat(
-        [df_orig_name, df_lookups, df_confidence, df_index], axis=1)
+    matches = pd.concat([df_orig_name, df_lookups, df_confidence, df_index], axis=1)
 
     # reorder columns | can be skipped
     lookup_cols = list(matches.columns.values)
     lookup_cols_reordered = [lookup_cols[0]]
-    for i in range(1, k_matches+1):
+    for i in range(1, k_matches + 1):
         lookup_cols_reordered.append(lookup_cols[i])
         lookup_cols_reordered.append(lookup_cols[i + k_matches])
         lookup_cols_reordered.append(lookup_cols[i + 2 * k_matches])

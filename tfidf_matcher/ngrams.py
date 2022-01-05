@@ -3,6 +3,7 @@
 
 import re
 
+
 def ngrams(string, n=3):
     """Generate a full list of ngrams from a list of strings
 
@@ -19,10 +20,10 @@ def ngrams(string, n=3):
     assert type(string) == type("string"), "String not passed in!"
 
     # Remove Punctuation from the string
-    string = re.sub(r'[,-./]|\sBD',r'', string)
+    string = re.sub(r"[,-./]|\sBD", r"", string)
 
     # Generate zip of ngrams (n defined in function argument)
     ngrams = zip(*[string[i:] for i in range(n)])
 
     # Return ngram list
-    return [''.join(ngram) for ngram in ngrams]
+    return ["".join(ngram) for ngram in ngrams]
