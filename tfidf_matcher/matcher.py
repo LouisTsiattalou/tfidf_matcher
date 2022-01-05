@@ -6,7 +6,8 @@ from tfidf_matcher.ngrams import ngrams
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import NearestNeighbors
 
-def matcher(original = [], lookup = [], k_matches = 5, ngram_length = 3):
+
+def matcher(original=[], lookup=[], k_matches=5, ngram_length=3):
     """Takes two lists, returns top `k` matches from `lookup` dataset.
 
     This function does this by:
@@ -38,10 +39,13 @@ def matcher(original = [], lookup = [], k_matches = 5, ngram_length = 3):
     """
 
     # Assertions
-    assert all([type(x) == type("string") for x in original]), "Original contains non-str elements!"
-    assert all([type(x) == type("string") for x in lookup]), "Lookup contains non-str elements!"
+    assert all([type(x) == type("string")
+               for x in original]), "Original contains non-str elements!"
+    assert all([type(x) == type("string")
+               for x in lookup]), "Lookup contains non-str elements!"
     assert type(k_matches) == type(0), "k_matches must be an integer"
-    assert k_matches <= len(lookup), "k_matches must be shorter or equal to the total length of the lookup list"
+    assert k_matches < len(
+        lookup), "k_matches must be shorter than the total length of the lookup list"
     assert type(ngram_length) == type(0), "ngram_length must be an integer"
 
     # Enforce listtype, set to lower
@@ -51,12 +55,12 @@ def matcher(original = [], lookup = [], k_matches = 5, ngram_length = 3):
     lookup_lower = [x.lower() for x in lookup]
 
     # Set ngram length for TfidfVectorizer callable
-    def ngrams_user(string, n = ngram_length):
+    def ngrams_user(string, n=ngram_length):
         return ngrams(string, n)
 
     # Generate Sparse TFIDF matrix from Lookup corpus
-    vectorizer = TfidfVectorizer(min_df = 1,
-                                 analyzer = ngrams_user)
+    vectorizer = TfidfVectorizer(min_df=1,
+                                 analyzer=ngrams_user)
     tf_idf_lookup = vectorizer.fit_transform(lookup_lower)
 
     # Fit KNN model to sparse TFIDF matrix generated from Lookup
@@ -65,25 +69,48 @@ def matcher(original = [], lookup = [], k_matches = 5, ngram_length = 3):
 
     # Use nbrs model to obtain nearest matches in lookup dataset. Vectorize first.
     tf_idf_original = vectorizer.transform(original_lower)
-    distances, indices = nbrs.kneighbors(tf_idf_original)
+    distances, lookup_indices = nbrs.kneighbors(tf_idf_original)
 
     # Extract top Match Score (which is just the distance to the nearest neighbour),
     # Original match item, and Lookup matches.
-    meta_list= []
-    lookup_list= []
-    for i,idx in enumerate(indices): # i is 0:len(original), j is list of lists of matches
-        metadata = [round(distances[i][0], 2), original[i]] # Original match and Match Score
-        lookups = [lookup[x] for x in idx] # Lookup columns
-        meta_list.append(metadata)
+    original_name_list = []
+    confidence_list = []
+    index_list = []
+    lookup_list = []
+    # i is 0:len(original), j is list of lists of matches
+    for i, lookup_index in enumerate(lookup_indices):
+        original_name = original[i]
+        # lookup names in lookup list
+        lookups = [lookup[index] for index in lookup_index]
+        # transform distances to confidences and store
+        confidence = [1 - round(dist, 2) for dist in distances[i]]
+        original_name_list.append(original_name)
+        # store index
+        index_list.append(lookup_index)
+        confidence_list.append(confidence)
         lookup_list.append(lookups)
 
     # Convert to df
-    df_metadata = pd.DataFrame(meta_list, columns = ['Match Confidence', 'Original Name'])
+    df_orig_name = pd.DataFrame(
+        original_name_list, columns=['Original Name'])
+
     df_lookups = pd.DataFrame(lookup_list,
-                              columns=['Lookup ' + str(x+1) for x in range(0,k_matches)])
+                              columns=['Lookup ' + str(x+1) for x in range(0, k_matches)])
+    df_confidence = pd.DataFrame(confidence_list,
+                                 columns=['Lookup ' + str(x+1) + ' Confidence' for x in range(0, k_matches)])
+    df_index = pd.DataFrame(index_list,
+                            columns=['Lookup ' + str(x+1) + ' Index' for x in range(0, k_matches)])
 
-    # bind columns, transform Match Confidence to {0,1} with 1 a guaranteed match.
-    matches = pd.concat([df_metadata, df_lookups], axis = 1)
-    matches['Match Confidence'] = abs(matches['Match Confidence'] - 1)
+    # bind columns
+    matches = pd.concat(
+        [df_orig_name, df_lookups, df_confidence, df_index], axis=1)
 
+    # reorder columns | can be skipped
+    lookup_cols = list(matches.columns.values)
+    lookup_cols_reordered = [lookup_cols[0]]
+    for i in range(1, k_matches+1):
+        lookup_cols_reordered.append(lookup_cols[i])
+        lookup_cols_reordered.append(lookup_cols[i + k_matches])
+        lookup_cols_reordered.append(lookup_cols[i + 2 * k_matches])
+    matches = matches[lookup_cols_reordered]
     return matches
