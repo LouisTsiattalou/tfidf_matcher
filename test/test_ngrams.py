@@ -2,10 +2,11 @@
 # DESCRIPTION: Test ngrams module. Execute with `python -m unittest discover -s test/`
 
 import unittest
+
 from tfidf_matcher.ngrams import ngrams
 
-class TestNgrams(unittest.TestCase):
 
+class TestNgrams(unittest.TestCase):
     def test_ngram_count(self):
         """Test that the number of ngrams returned by the function is correct."""
         data = "This is a sentence"
@@ -21,6 +22,7 @@ class TestNgrams(unittest.TestCase):
         self.assertTrue(all([len(x) == 2 for x in ngrams(data, n=2)]))
         self.assertTrue(all([len(x) == 3 for x in ngrams(data, n=3)]))
         self.assertTrue(all([len(x) == 18 for x in ngrams(data, n=18)]))
+
 
 if __name__ == "__main__":
     unittest.main()
