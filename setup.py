@@ -19,6 +19,5 @@ setup(
     ],
     packages=find_packages(),
     python_requires='>=3.5',
-    install_requires=["sklearn", "pandas"],
-    setup_requires=["sklearn", "pandas"]
+    install_requires=["scikit-learn", "pandas"],
 )
