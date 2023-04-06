@@ -5,7 +5,7 @@ long_description_md = open("README.md", encoding = "utf-8").read()
 
 setup(
     name="tfidf_matcher",
-    version="0.2.0",
+    version="0.3.0",
     author="Louis Tsiattalou",
     author_email="louis.tsi@gmail.com",
     description="A small package that enables super-fast TF-IDF based string matching.",
